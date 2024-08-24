@@ -20,7 +20,7 @@ class WeatherInfoBody extends StatelessWidget {
               child: IconButton(
                 tooltip: 'Search',
                 onPressed: () {
-                  Navigator.push(
+                  Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
                       builder: ((context) => const SearchPage()),

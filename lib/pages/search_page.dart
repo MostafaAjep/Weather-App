@@ -42,7 +42,7 @@ class SearchPage extends StatelessWidget {
               //     log('Icon URL: ${forecast.image}');
               //   }
               // }
-              Navigator.push(
+              Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
                   builder: ((context) => WeatherInfoBody(
