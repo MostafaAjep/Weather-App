@@ -1,8 +1,11 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:weather_app/models/weather_model.dart';
+import 'package:weather_app/services/weather_bloc.dart';
 import 'package:weather_app/services/weather_service.dart';
+import 'package:weather_app/widgets/weather_event.dart';
 import 'package:weather_app/widgets/weather_info.dart';
 
 class SearchPage extends StatelessWidget {
@@ -10,6 +13,10 @@ class SearchPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    void onCitySearched(WeatherModel weatherModel) {
+      context.read<WeatherBloc>().add(AddCityEvent(weatherModel));
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -29,7 +36,9 @@ class SearchPage extends StatelessWidget {
             onSubmitted: (value) async {
               WeatherModel weatherModel =
                   await WeatherService().getCurrentWeather(cityName: value);
+              onCitySearched(weatherModel);
               log(weatherModel.forecasts[0].wind.toString());
+
               // log(weatherModel.cityName);
               // log(weatherModel.date);
               // for (var forecast in weatherModel.forecasts) {
