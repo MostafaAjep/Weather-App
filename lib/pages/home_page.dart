@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:weather_app/services/weather_State.dart';
-import 'package:weather_app/services/weather_bloc.dart';
-import 'package:weather_app/widgets/city_container.dart';
+import 'package:weather_app/cubits/get_weather_cubit/get_weather_cubit.dart';
 import 'package:weather_app/widgets/no_weather_body.dart';
 import 'package:weather_app/pages/search_page.dart';
-import 'package:weather_app/widgets/weather_event.dart';
+import 'package:weather_app/widgets/weather_info.dart';
+import '../cubits/get_weather_cubit/get_weather_states.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -33,7 +32,7 @@ class HomePage extends StatelessWidget {
                 size: 30,
               ),
             ),
-          ),
+          )
         ],
         backgroundColor: const Color(0xff2296F3),
         title: const Text(
@@ -43,26 +42,21 @@ class HomePage extends StatelessWidget {
           ),
         ),
       ),
-      body: BlocBuilder<WeatherBloc, WeatherState>(
+      body: BlocBuilder<GetWeatherCubit, WeatherState>(
         builder: (context, state) {
-          if (state is WeatherLoaded) {
-            if (state.cities.isEmpty) {
-              return const NoWeatherBody(); // Show this when there are no cities
-            }
-            return ListView.builder(
-              itemCount: state.cities.length,
-              itemBuilder: (context, index) {
-                return Dismissible(
-                  key: Key(state.cities[index].cityName),
-                  onDismissed: (direction) {
-                    context.read<WeatherBloc>().add(DeleteCityEvent(index));
-                  },
-                  child: CityContainer(weatherModel: state.cities[index]),
-                );
-              },
+          if (state is NoWeatherState) {
+            return const NoWeatherBody();
+          } else if (state is WeatherLoadedState) {
+            return const WeatherInfoBody();
+          } else if (state is WeatherLoadingState) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          } else {
+            return const Center(
+              child: Text('Error'),
             );
           }
-          return const NoWeatherBody(); // Show this if state is not loaded or any other state
         },
       ),
     );

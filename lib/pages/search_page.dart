@@ -1,22 +1,12 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:weather_app/models/weather_model.dart';
-import 'package:weather_app/services/weather_bloc.dart';
-import 'package:weather_app/services/weather_service.dart';
-import 'package:weather_app/widgets/weather_event.dart';
-import 'package:weather_app/widgets/weather_info.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../cubits/get_weather_cubit/get_weather_cubit.dart';
 
 class SearchPage extends StatelessWidget {
   const SearchPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    void onCitySearched(WeatherModel weatherModel) {
-      context.read<WeatherBloc>().add(AddCityEvent(weatherModel));
-    }
-
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -33,32 +23,11 @@ class SearchPage extends StatelessWidget {
         child: Center(
           child: TextField(
             textCapitalization: TextCapitalization.sentences,
-            onSubmitted: (value) async {
-              WeatherModel weatherModel =
-                  await WeatherService().getCurrentWeather(cityName: value);
-              onCitySearched(weatherModel);
-              log(weatherModel.forecasts[0].wind.toString());
-
-              // log(weatherModel.cityName);
-              // log(weatherModel.date);
-              // for (var forecast in weatherModel.forecasts) {
-              //   log('Weather: ${forecast.weatherCondition}');
-              //   log('Day: ${forecast.dayDate}');
-              //   log('Temp: ${forecast.temp}°C');
-              //   log('Max Temp: ${forecast.maxTemp}°C');
-              //   log('Min Temp: ${forecast.minTemp}°C');
-              //   if (forecast.image != null) {
-              //     log('Icon URL: ${forecast.image}');
-              //   }
-              // }
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: ((context) => WeatherInfoBody(
-                        weatherModel: weatherModel,
-                      )),
-                ),
-              );
+            onSubmitted: (value) {
+              //write your search logic here
+              BlocProvider.of<GetWeatherCubit>(context)
+                  .getWeather(cityName: value, context: context);
+              Navigator.pop(context);
             },
             maxLength: 15,
             decoration: InputDecoration(
@@ -67,13 +36,6 @@ class SearchPage extends StatelessWidget {
               label: const Text('Search'),
               hintText: 'Enter City Name',
               suffixIcon: const Icon(Icons.search),
-              // enabledBorder: OutlineInputBorder(
-              //     borderRadius: BorderRadius.circular(16),
-              //     borderSide: const BorderSide(color: Colors.amber)),
-              // focusedBorder: OutlineInputBorder(
-              //   borderSide: const BorderSide(color: Colors.amber),
-              //   borderRadius: BorderRadius.circular(16),
-              // ),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(16),
               ),

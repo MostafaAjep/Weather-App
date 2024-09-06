@@ -1,6 +1,6 @@
 class WeatherModel {
   final String cityName;
-  final String date;
+  final DateTime date;
   final List<Forecast> forecasts;
 
   WeatherModel({
@@ -17,7 +17,8 @@ class WeatherModel {
 
     return WeatherModel(
       cityName: json['location']['name'],
-      date: json['location']['localtime'],
+      //like the function in the weather info widget
+      date: DateTime.parse(json['location']['localtime']),
       forecasts: forecasts,
     );
   }
